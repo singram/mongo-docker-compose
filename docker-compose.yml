@@ -1,87 +1,112 @@
+dnsdock:
+  image: tonistiigi/dnsdock
+  volumes:
+    - /var/run/docker.sock:/run/docker.sock
+  ports:
+    - 172.17.42.1:53:53/udp
 mongors1n1:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db --nojournal --oplogSize 16 --noauth
   environment:
     TERM: xterm
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors1n1:/data/db
 mongors1n2:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db --nojournal --oplogSize 16 --noauth
   environment:
     TERM: xterm
-  links:
-    - mongors1n1
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors1n2:/data/db
 mongors1n3:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db --nojournal --oplogSize 16 --noauth
   environment:
     TERM: xterm
-  links:
-    - mongors1n2
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors1n3:/data/db
 mongors2n1:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --nojournal --oplogSize 16 --noauth
   environment:
     TERM: xterm
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors2n1:/data/db
 mongors2n2:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --nojournal --oplogSize 16 --noauth
   environment:
     TERM: xterm
-  links:
-    - mongors2n1
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors2n2:/data/db
 mongors2n3:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --nojournal --oplogSize 16 --noauth
   environment:
     TERM: xterm
-  links:
-    - mongors2n2
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors2n3:/data/db
 mongocfg1:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth
   environment:
     TERM: xterm
-  links:
-    - mongors1n1
-    - mongors2n1
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongo-cfg-1:/data/db
 mongocfg2:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth
   environment:
     TERM: xterm
-  links:
-    - mongocfg1
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
-    - ./data/mongo-cfg-1:/data/db
+    - ./data/mongo-cfg-2:/data/db
 mongocfg3:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
+  image: mongo:3.0.6
+  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth
   environment:
     TERM: xterm
-  links:
-    - mongocfg1
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
-    - ./data/mongo-cfg-1:/data/db
+    - ./data/mongo-cfg-3:/data/db
+mongos:
+  image: mongo:3.0.6
+  command: mongos --configdb mongodockercompose_mongocfg1_1.mongo.docker:27017,mongodockercompose_mongocfg2_1.mongo.docker:27017,mongodockercompose_mongocfg3_1.mongo.docker:27017 --port 27017
+  environment:
+    TERM: xterm
+  dns:
+    - 172.17.42.1
+  expose:
+    - 27017
+  links:
+    - mongocfg1
+    - mongocfg2
+    - mongocfg3
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - ./data/mongo-cfg-3:/data/db
