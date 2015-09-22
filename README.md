@@ -11,34 +11,34 @@ The MongoDB environment consistes of the following docker containers
 
 ### Install Docker
 
-  sudo apt-get install -y apparmor lxc cgroup-lite curl
-  wget -qO- https://get.docker.com/ | sh
-  sudo usermod -aG docker YourUserNameHere
-  sudo service docker restart
+    sudo apt-get install -y apparmor lxc cgroup-lite curl
+    wget -qO- https://get.docker.com/ | sh
+    sudo usermod -aG docker YourUserNameHere
+    sudo service docker restart
 
 ### Install Docker-compose
 
-  sudo su
-  curl -L https://github.com/docker/compose/releases/download/1.3.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-  chmod +x /usr/local/bin/docker-compose
-  exit
+    sudo su
+    curl -L https://github.com/docker/compose/releases/download/1.3.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    exit
 
 ## Check out the repository
 
-  git clone git@github.com:singram/mongo-docker-compose.git
-  cd mongo-docker-compose
+    git clone git@github.com:singram/mongo-docker-compose.git
+    cd mongo-docker-compose
 
 ## Verify host systems docker0 interface
 
-  ifconfig docker0 | grep "inet addr" | awk -F'[: ]+' '{ print $4 }'
+    ifconfig docker0 | grep "inet addr" | awk -F'[: ]+' '{ print $4 }'
 
 This usually defaults to
 
-  172.17.42.1
+    172.17.42.1
 
 And is what the codebase assumes.  If yours is different run the following
 
-  sed -i 's/172.17.42.1/NEW_IP_HERE/g' docker-compose.yml
+    sed -i 's/172.17.42.1/NEW_IP_HERE/g' docker-compose.yml
 
 To replace all instances with your docker0 ip.
 
@@ -46,27 +46,27 @@ To replace all instances with your docker0 ip.
 
 Edit the docker configuration file and incoportate --dns and --bip options in the DOCKER_OPTS environment variable, something like
 
-  DOCKER_OPTS="--bip=172.17.42.1/24 --dns=172.17.42.1"
+    DOCKER_OPTS="--bip=172.17.42.1/24 --dns=172.17.42.1"
 
-  sudo nano /etc/defaults/docker
+    sudo nano /etc/defaults/docker
 
 Restart the service for the new options to take effect
 
-  sudo service docker restart
+    sudo service docker restart
 
 
 ## Setup Cluster
 This will pull all the images from [Docker index](https://index.docker.io/u/jacksoncage/mongo/) and setup Mongodb sharded cluster. Please make sure `DOCKERIP` in `docker_mongodb_cluster/start_cluster.sh` is using docker0 interface or public IP if you prefere that.
 
-  docker-compose up
+    docker-compose up
 
 You will need to run the following *once* only to initialize all replica sets and shards
 
-  ./initiate
+    ./initiate
 
 You should now be able connect to mongos1 and the new sharded cluster:
 
-  mongo --port 49550
+    mongo --port 49550
 
 
 
