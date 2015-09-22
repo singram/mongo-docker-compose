@@ -1,8 +1,22 @@
+dnsdock:
+  image: tonistiigi/dnsdock
+  volumes:
+    - /var/run/docker.sock:/run/docker.sock
+  ports:
+    - 172.17.42.1:53:53/udp
 mongors1n1:
   image: mongo:3.1
   command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db
   environment:
     TERM: xterm
+    # DNSDOCK_NAME: rs1n1
+    # DNSDOCK_IMAGE: mongocluster
+  hostname: rs1n1
+  domainname: mongocluster.com
+  dns:
+    - 172.17.42.1
+#  links:
+#    - dnsdock
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors1n1:/data/db
@@ -11,8 +25,8 @@ mongors1n2:
   command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db
   environment:
     TERM: xterm
-  links:
-    - mongors1n1
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors1n2:/data/db
@@ -21,67 +35,66 @@ mongors1n3:
   command: mongod --noprealloc --smallfiles --replSet mongors1 --dbpath /data/db
   environment:
     TERM: xterm
-  links:
-    - mongors1n2
+  dns:
+    - 172.17.42.1
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./data/mongors1n3:/data/db
-mongors2n1:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
-  environment:
-    TERM: xterm
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-    - ./data/mongors2n1:/data/db
-mongors2n2:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
-  environment:
-    TERM: xterm
-  links:
-    - mongors2n1
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-    - ./data/mongors2n2:/data/db
-mongors2n3:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
-  environment:
-    TERM: xterm
-  links:
-    - mongors2n2
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-    - ./data/mongors2n3:/data/db
-mongocfg1:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
-  environment:
-    TERM: xterm
-  links:
-    - mongors1n1
-    - mongors2n1
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-    - ./data/mongo-cfg-1:/data/db
-mongocfg2:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
-  environment:
-    TERM: xterm
-  links:
-    - mongocfg1
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-    - ./data/mongo-cfg-1:/data/db
-mongocfg3:
-  image: mongo:3.1
-  command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
-  environment:
-    TERM: xterm
-  links:
-    - mongocfg1
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-    - ./data/mongo-cfg-1:/data/db
+# mongors2n1:
+#   image: mongo:3.1
+#   command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
+#   environment:
+#     TERM: xterm
+#   links:
+#     - mongors2n2
+#     - mongors2n3
+#   volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - ./data/mongors2n1:/data/db
+# mongors2n2:
+#   image: mongo:3.1
+#   command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
+#   environment:
+#     TERM: xterm
+#   volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - ./data/mongors2n2:/data/db
+# mongors2n3:
+#   image: mongo:3.1
+#   command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db
+#   environment:
+#     TERM: xterm
+#   volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - ./data/mongors2n3:/data/db
+# mongocfg1:
+#   image: mongo:3.1
+#   command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
+#   environment:
+#     TERM: xterm
+#   links:
+#     - mongors1n1
+#     - mongors2n1
+#   volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - ./data/mongo-cfg-1:/data/db
+# mongocfg2:
+#   image: mongo:3.1
+#   command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
+#   environment:
+#     TERM: xterm
+#   links:
+#     - mongocfg1
+#   volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - ./data/mongo-cfg-1:/data/db
+# mongocfg3:
+#   image: mongo:3.1
+#   command: mongod --noprealloc --smallfiles --replSet mongors2 --dbpath /data/db --configsvr
+#   environment:
+#     TERM: xterm
+#   links:
+#     - mongocfg1
+#   volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - ./data/mongo-cfg-1:/data/db
