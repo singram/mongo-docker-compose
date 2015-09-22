@@ -40,7 +40,7 @@ And is what the codebase assumes.  If yours is different run the following
 
     sed -i 's/172.17.42.1/NEW_IP_HERE/g' docker-compose.yml
 
-To replace all instances with your docker0 ip.
+To replace all instances with your particular docker0 ip.
 
 ## Configure docker daemon
 
@@ -56,7 +56,7 @@ Restart the service for the new options to take effect
 
 
 ## Setup Cluster
-This will pull all the images from [Docker index](https://index.docker.io/u/jacksoncage/mongo/) and setup Mongodb sharded cluster. Please make sure `DOCKERIP` in `docker_mongodb_cluster/start_cluster.sh` is using docker0 interface or public IP if you prefere that.
+This will pull all the images from [Docker index](https://index.docker.io/u/jacksoncage/mongo/) and setup Mongodb sharded cluster.
 
     docker-compose up
 
@@ -64,11 +64,13 @@ You will need to run the following *once* only to initialize all replica sets an
 
     ./initiate
 
-You should now be able connect to mongos1 and the new sharded cluster:
+You should now be able connect to mongos1 and the new sharded cluster either directly from your host
 
     mongo --port 49550
 
+or from the mongos container itself using the mongo shell to connect to the running mongos process
 
+    docker exec -it mongodockercompose_mongos1 bash -c "mongo -p 49550"
 
 ## Persistent storage
 Data is stored at `./data/` and are excluded from version control. Data will be persistent between container runs. To remove all data `./reset`
