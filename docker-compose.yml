@@ -66,7 +66,7 @@ mongors2n3:
     - ./data/mongors2n3:/data/db
 mongocfg1:
   image: mongo:3.0.6
-  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth
+  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth --port 27017
   environment:
     TERM: xterm
   dns:
@@ -76,7 +76,7 @@ mongocfg1:
     - ./data/mongo-cfg-1:/data/db
 mongocfg2:
   image: mongo:3.0.6
-  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth
+  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth --port 27017
   environment:
     TERM: xterm
   dns:
@@ -86,7 +86,7 @@ mongocfg2:
     - ./data/mongo-cfg-2:/data/db
 mongocfg3:
   image: mongo:3.0.6
-  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth
+  command: mongod --noprealloc --smallfiles --dbpath /data/db --configsvr --noauth --port 27017
   environment:
     TERM: xterm
   dns:
@@ -103,10 +103,5 @@ mongos:
     - 172.17.42.1
   expose:
     - 27017
-  links:
-    - mongocfg1
-    - mongocfg2
-    - mongocfg3
   volumes:
     - /etc/localtime:/etc/localtime:ro
-    - ./data/mongo-cfg-3:/data/db

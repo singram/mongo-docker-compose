@@ -28,12 +28,12 @@ The MongoDB environment consistes of the following docker containers
     chmod +x /usr/local/bin/docker-compose
     exit
 
-## Check out the repository
+### Check out the repository
 
     git clone git@github.com:singram/mongo-docker-compose.git
     cd mongo-docker-compose
 
-## Verify host systems docker0 interface
+### Verify host systems docker0 interface
 
     ifconfig docker0 | grep "inet addr" | awk -F'[: ]+' '{ print $4 }'
 
@@ -47,7 +47,7 @@ And is what the codebase assumes.  If yours is different run the following
 
 To replace all instances with your particular docker0 ip.
 
-## Configure docker daemon
+### Configure docker daemon
 
 Edit the docker configuration file and incoportate --dns and --bip options in the DOCKER_OPTS environment variable, something like
 
@@ -60,12 +60,12 @@ Restart the service for the new options to take effect
     sudo service docker restart
 
 
-## Setup Cluster
-This will pull all the images from [Docker index](https://index.docker.io/u/jacksoncage/mongo/) and setup Mongodb sharded cluster.
+### Setup Cluster
+This will pull all the images from [Docker index](https://index.docker.io/u/jacksoncage/mongo/) and run all the containers.
 
     docker-compose up
 
-You will need to run the following *once* only to initialize all replica sets and shards
+You will need to run the following *once* only to initialize all replica sets and shard data across them
 
     ./initiate
 
@@ -75,7 +75,7 @@ You should now be able connect to mongos1 and the new sharded cluster either dir
 
 or from the mongos container itself using the mongo shell to connect to the running mongos process
 
-    docker exec -it mongodockercompose_mongos1 bash -c "mongo -p 49550"
+    docker exec -it mongodockercompose_mongos1 bash -c "mongo -p 21017"
 
 ## Persistent storage
 Data is stored at `./data/` and are excluded from version control. Data will be persistent between container runs. To remove all data `./reset`
