@@ -71,11 +71,11 @@ You will need to run the following *once* only to initialize all replica sets an
 
 You should now be able connect to mongos1 and the new sharded cluster either directly from your host
 
-    mongo --port 49550
+    mongo --port 21017
 
 or from the mongos container itself using the mongo shell to connect to the running mongos process
 
-    docker exec -it mongodockercompose_mongos1 bash -c "mongo -p 21017"
+    docker exec -it mongodockercompose_mongos1 mongo --port 21017
 
 ## Persistent storage
 Data is stored at `./data/` and are excluded from version control. Data will be persistent between container runs. To remove all data `./reset`

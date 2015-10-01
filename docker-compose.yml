@@ -101,7 +101,14 @@ mongos:
     TERM: xterm
   dns:
     - 172.17.42.1
-  expose:
-    - 27017
+  ports:
+    - 27017:27017
   volumes:
     - /etc/localtime:/etc/localtime:ro
+opsmanager:
+  build: ops-manager/
+  links:
+  - mongos
+  ports:
+  - "8080:8080"
+  - "8081:8081"
