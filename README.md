@@ -5,7 +5,7 @@ The MongoDB environment consistes of the following docker containers
 
  - **mongosrs(1-3)n(1-3)**: Mongod data server with three replica sets containing 3 nodes each (9 containers)
  - **mongocfg(1-3)**: Stores metadata for sharded data distribution (3 containers)
- - **mongos1**:	Mongo routing service to connect to the cluster through (1 container)
+ - **mongos(1-2)**: Mongo routing service to connect to the cluster through (1 container)
 
 ## Caveats
 
@@ -53,6 +53,7 @@ Data is stored at `./data/` and are excluded from version control. Data will be 
 
 ## TODO
 
+ - Add local Ops Mananger
  - Implement authentication across cluster.  http://docs.mongodb.org/manual/tutorial/deploy-replica-set-with-auth/
 
 ## Built upon
