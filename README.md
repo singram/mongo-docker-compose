@@ -1,7 +1,7 @@
 # mongo-docker-compose
-This repoisitory provides a fully sharded mongo environment using docker-compose and local storage.
+This repository provides a fully sharded mongo environment using docker-compose and local storage.
 
-The MongoDB environment consistes of the following docker containers
+The MongoDB environment consists of the following docker containers
 
  - **mongosrs(1-3)n(1-3)**: Mongod data server with three replica sets containing 3 nodes each (9 containers)
  - **mongocfg(1-3)**: Stores metadata for sharded data distribution (3 containers)
@@ -46,10 +46,10 @@ You will need to run the following *once* only to initialize all replica sets an
 
 You should now be able connect to mongos1 and the new sharded cluster from the mongos container itself using the mongo shell to connect to the running mongos process
 
-    docker exec -it mongodockercompose_mongos1_1 mongo --port 21017
+    docker exec -it mongos1 mongo --port 21017
 
 ## Persistent storage
-Data is stored at `./data/` and are excluded from version control. Data will be persistent between container runs. To remove all data `./reset`
+Data is stored at `./data/` and is excluded from version control. Data will be persistent between container runs. To remove all data `./reset`
 
 ## TODO
 
