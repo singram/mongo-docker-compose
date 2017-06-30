@@ -17,4 +17,5 @@ docker-compose exec mongos1 bash -c "/tmp/wait-for-it.sh mongocfg1:27019;/tmp/wa
 # Add better mechanisum to wait for mongos connectivity to be
 # established by tailing docker log for connection readiness
 echo "Intializing shards through router"
+docker-compose exec mongos1 bash -c "/tmp/wait-for-it.sh -t 60 mongos1:27017;/tmp/wait-for-it.sh mongos2:27017"
 docker-compose exec mongos1 bash -c "echo \"sh.addShard('mongors1/mongors1n1:27018,mongors1n2:27018'); sh.addShard('mongors2/mongors2n1:27018,mongors2n2:27018');sh.status()\" | mongo "

@@ -3,9 +3,9 @@ This repository provides a fully sharded mongo environment using docker-compose 
 
 The MongoDB environment consists of the following docker containers
 
- - **mongosrs(1-3)n(1-3)**: Mongod data server with three replica sets containing 3 nodes each (9 containers)
- - **mongocfg(1-3)**: Stores metadata for sharded data distribution (3 containers)
- - **mongos(1-2)**: Mongo routing service to connect to the cluster through (1 container)
+ - **mongosrs(1-2)n(1-3)**: Mongod data server with two replica sets containing 3 nodes each (2 replica + 1 arbiter * 2 : 6 containers)
+ - **mongocfg(1-3)**: Stores metadata for sharded data distribution CSRS (3 containers)
+ - **mongos(1-2)**: Mongo routing service to connect to the cluster through (2 containers)
 
 ## Caveats
 
@@ -33,7 +33,6 @@ The MongoDB environment consists of the following docker containers
     git clone git@github.com:singram/mongo-docker-compose.git
     cd mongo-docker-compose
 
-
 ### Setup Cluster
 This will pull all the images from [Docker index](https://index.docker.io/u/jacksoncage/mongo/) and run all the containers.
 
@@ -44,12 +43,28 @@ You will need to run the following *once* only to initialize all replica sets an
 
     ./initiate
 
+A Makefile is also available :  
+
+⇒  make help
+
+----- BUILD ------------------------------------------------------------------------------
+up                   Start docker-compose
+init                 Launch mongo cluster init
+clean                Stop docker containers and clean volumes
+start                Start container and init
+stop                 Stop docker containers
+watch                Watch logs
+restart              Clean and restart
+----- OTHERS -----------------------------------------------------------------------------
+help                 print this message
+'''
+
 You should now be able connect to mongos1 and the new sharded cluster from the mongos container itself using the mongo shell to connect to the running mongos process
 
     docker exec -it mongos1 mongo --port 21017
 
 ## Persistent storage
-Data is stored at `./data/` and is excluded from version control. Data will be persistent between container runs. To remove all data `./reset`
+Data is stored in docker volumes. To remove all data : `make clean`.
 
 ## TODO
 
