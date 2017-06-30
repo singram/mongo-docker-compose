@@ -1,37 +1,24 @@
-# -----------------------------------------------------------------
-#        Main targets
-# -----------------------------------------------------------------
+.PHONY: initiate help
+.DEFAULT_GOAL := help
 
-help:
-	@echo
-	@echo "----- BUILD ------------------------------------------------------------------------------"
-	@echo "up                   Start Mongo cluster (without init)"
-	@echo "init                 Launch mongo cluster init"
-	@echo "clean                Stop docker containers and clean volumes"
-	@echo "start                Start containers and launch init"
-	@echo "stop                 Stop docker containers"
-	@echo "watch                Watch logs"
-	@echo "restart              Clean and restart"
-	@echo "----- OTHERS -----------------------------------------------------------------------------"
-	@echo "help                 print this message"
-
-.PHONY: initiate
-
-up:
+up: ## Start Mongo cluster (without init)
 	docker-compose up -d
 
-init:
+init: ## Launch mongo cluster init
 	./initiate
 
-clean:
+clean: ## Stop docker containers and clean volumes
 	docker-compose down -v
 
-stop:
+start: up init ## Start containers and launch init
+
+stop: ## Stop docker containers
 	docker-compose stop
 
-start: up init
-
-restart: clean start
-
-watch:
+watch: ## Watch logs
 	docker-compose logs -f
+
+restart: clean start ## Clean and restart
+
+help: ## print this message
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-10s\033[0m %s\n", $$1, $$2}'
