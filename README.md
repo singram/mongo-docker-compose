@@ -45,19 +45,19 @@ You will need to run the following *once* only to initialize all replica sets an
 
 A Makefile is also available :  
 
-⇒  make help
+    ⇒  make help
 
------ BUILD ------------------------------------------------------------------------------
-up                   Start docker-compose
-init                 Launch mongo cluster init
-clean                Stop docker containers and clean volumes
-start                Start container and init
-stop                 Stop docker containers
-watch                Watch logs
-restart              Clean and restart
------ OTHERS -----------------------------------------------------------------------------
-help                 print this message
-'''
+    ----- BUILD ------------------------------------------------------------------------------
+    up                   Start docker-compose
+    init                 Launch mongo cluster init
+    clean                Stop docker containers and clean volumes
+    start                Start container and init
+    stop                 Stop docker containers
+    watch                Watch logs
+    restart              Clean and restart
+    ----- OTHERS -----------------------------------------------------------------------------
+    help                 print this message
+
 
 You should now be able connect to mongos1 and the new sharded cluster from the mongos container itself using the mongo shell to connect to the running mongos process
 
