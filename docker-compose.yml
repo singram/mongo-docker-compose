@@ -111,7 +111,7 @@ services:
       - 27017:27017
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - .:/tmp
+      - ./wait-for-it.sh:/tmp/wait-for-it.sh
 
   mongos2:
     image: mongo:3.4
