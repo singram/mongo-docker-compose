@@ -1,9 +1,0 @@
-#!/bin/bash
-
-dirs=( mongocfg1  mongocfg2  mongocfg3  mongors1n1  mongors1n2  mongors1n3  mongors2n1  mongors2n2  mongors2n3 )
-for d in ${dirs[@]}; do
-  echo "Resetting data/$d"
-  sudo rm -rf data/$d
-  mkdir data/$d
-  touch data/$d/.gitkeep
-done

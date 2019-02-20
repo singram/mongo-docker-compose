@@ -1,13 +1,39 @@
 #!/bin/bash
 
+set -o errexit
+set -o pipefail
+set -o nounset
+
 for (( rs = 1; rs < 3; rs++ )); do
-  echo "Intializing replica ${rs} set"
-  replicate="rs.initiate(); sleep(1000); cfg = rs.conf(); cfg.members[0].host = \"mongors${rs}n1\"; rs.reconfig(cfg); rs.add(\"mongors${rs}n2\"); rs.add(\"mongors${rs}n3\"); rs.status();"
-  docker exec -it mongors${rs}n1 bash -c "echo '${replicate}' | mongo"
+  echo ""
+  echo "=> Intializing replicaset ${rs}"
+  echo ""
+  for (( node = 1; node < 3; node++ )); do
+    docker-compose exec mongos1 bash -c "/tmp/wait-for-it.sh -t 60 mongors${rs}n${node}:27018"
+  done
+  replicate="rs.initiate(); sleep(1000); cfg = rs.conf(); cfg.members[0].host = \"mongors${rs}n1:27018\"; sleep(1000);rs.reconfig(cfg); rs.add(\"mongors${rs}n2:27018\"); rs.addArb(\"mongors${rs}n3:27018\"); rs.status();"
+
+  echo "=> Replicaset${rs} configuration : "
+  docker-compose exec mongors${rs}n1 bash -c "echo '${replicate}' | mongo --port 27018"
 done
 
-sleep 2
+echo ""
+echo "=> Intializing replicaset for config"
+echo ""
+replicate="rs.initiate(); sleep(1000); cfg = rs.conf(); cfg.members[0].host = \"mongocfg1:27019\"; rs.reconfig(cfg); rs.add(\"mongocfg2:27019\"); rs.add(\"mongocfg3:27019\"); rs.status();"
+
+echo ""
+echo "=> Config replicaset configuration : "
+echo ""
+docker-compose exec mongocfg1 bash -c "echo '${replicate}' | mongo --port 27019"
+
+
+docker-compose exec mongos1 bash -c "/tmp/wait-for-it.sh mongocfg1:27019;/tmp/wait-for-it.sh mongocfg2:27019;/tmp/wait-for-it.sh mongocfg1:27019;"
+
 # Add better mechanisum to wait for mongos connectivity to be
 # established by tailing docker log for connection readiness
-
-docker exec -it mongos1 bash -c "echo \"sh.addShard('mongors1/mongors1n1:27017'); sh.addShard('mongors2/mongors2n1:27017');\" | mongo "
+echo ""
+echo "Intializing shards through router"
+echo ""
+docker-compose exec mongos1 bash -c "/tmp/wait-for-it.sh -t 60 mongos1:27017;/tmp/wait-for-it.sh mongos2:27017"
+docker-compose exec mongos1 bash -c "echo \"sh.addShard('mongors1/mongors1n1:27018,mongors1n2:27018'); sh.addShard('mongors2/mongors2n1:27018,mongors2n2:27018');sh.status()\" | mongo "
