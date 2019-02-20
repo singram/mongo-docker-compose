@@ -83,7 +83,8 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - .:/tmp
+      - ./wait-for-it.sh:/tmp/wait-for-it.sh
+
 
   mongos2:
     image: mongo:${MONGO_VERSION}
