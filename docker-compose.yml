@@ -1,138 +1,96 @@
-version: "2"
+version: "3"
 services:
 
   mongors1n1:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --replSet mongors1 --shardsvr --nojournal --oplogSize 16 --noauth --rest
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --replSet mongors1 --shardsvr --oplogSize 16 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27018
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongors1n1vol:/data/db
 
   mongors1n2:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --replSet mongors1 --shardsvr --nojournal --oplogSize 16 --noauth --rest
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --replSet mongors1 --shardsvr --oplogSize 16 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27018
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongors1n2vol:/data/db
 
   mongors1n3:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --replSet mongors1 --shardsvr --nojournal --oplogSize 16 --noauth --rest
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --replSet mongors1 --shardsvr --oplogSize 16 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27018
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongors1n3vol:/data/db
 
   mongors2n1:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --replSet mongors2 --shardsvr --nojournal --oplogSize 16 --noauth --rest
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --replSet mongors2 --shardsvr --oplogSize 16 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27018
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongors2n1vol:/data/db
 
   mongors2n2:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --replSet mongors2 --shardsvr --nojournal --oplogSize 16 --noauth
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --replSet mongors2 --shardsvr --oplogSize 16 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27018
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongors2n2vol:/data/db
 
   mongors2n3:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --replSet mongors2 --shardsvr --nojournal --oplogSize 16 --noauth
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --replSet mongors2 --shardsvr --oplogSize 16 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27018
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongors2n3vol:/data/db
 
   mongocfg1:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --configsvr --replSet mongocfg1 --noauth
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --configsvr --replSet mongocfg1 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27019
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongocfg1vol:/data/configdb
 
   mongocfg2:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --configsvr --replSet mongocfg1 --noauth
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --configsvr --replSet mongocfg1 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27019
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongocfg2vol:/data/configdb
 
   mongocfg3:
-    image: mongo:3.4
-    command: mongod --noprealloc --smallfiles --configsvr --replSet mongocfg1 --noauth
+    image: mongo:${MONGO_VERSION}
+    command: mongod --noprealloc --smallfiles --configsvr --replSet mongocfg1 --noauth --bind_ip_all
     environment:
       TERM: xterm
     expose:
       - 27019
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mongocfg3vol:/data/configdb
 
   mongos1:
-    image: mongo:3.4
+    image: mongo:${MONGO_VERSION}
     depends_on:
       - mongocfg1
       - mongocfg2
       - mongocfg3
-    command: mongos --configdb mongocfg1/mongocfg1:27019,mongocfg2:27019,mongocfg3:27019 --port 27017
+    command: mongos --configdb mongocfg1/mongocfg1:27019,mongocfg2:27019,mongocfg3:27019 --bind_ip_all
     ports:
       - 27017:27017
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - .:/tmp
 
   mongos2:
-    image: mongo:3.4
+    image: mongo:${MONGO_VERSION}
     depends_on:
       - mongocfg1
       - mongocfg2
       - mongocfg3
-    command: mongos --configdb mongocfg1/mongocfg1:27019,mongocfg2:27019,mongocfg3:27019 --port 27017
+    command: mongos --configdb mongocfg1/mongocfg1:27019,mongocfg2:27019,mongocfg3:27019 --bind_ip_all
     ports:
       - 27018:27017
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-
-
-volumes:
-  mongors1n1vol:
-  mongors1n2vol:
-  mongors1n3vol:
-  mongors2n1vol:
-  mongors2n2vol:
-  mongors2n3vol:
-  mongocfg1vol:
-  mongocfg2vol:
-  mongocfg3vol:
