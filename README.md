@@ -12,21 +12,7 @@ The MongoDB environment consists of the following docker containers
  - This is designed to have a minimal disk footprint at the cost of durability.
  - This is designed in no way for production but as a cheap learning and exploration vehicle.
 
-## Installation (Debian base):
-
-### Install Docker
-
-    sudo apt-get install -y apparmor lxc cgroup-lite curl
-    wget -qO- https://get.docker.com/ | sh
-    sudo usermod -aG docker YourUserNameHere
-    sudo service docker restart
-
-### Install Docker-compose (1.4.2+)
-
-    sudo su
-    curl -L https://github.com/docker/compose/releases/download/1.4.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
-    exit
+## Installation
 
 ### Check out the repository
 
@@ -34,16 +20,19 @@ The MongoDB environment consists of the following docker containers
     cd mongo-docker-compose
 
 ### Setup Cluster
-This will pull all the images from [Docker index](https://index.docker.io/u/jacksoncage/mongo/) and run all the containers.
+This will pull all the images from [Docker index](https://hub.docker.com/_/mongo) and run all the containers.
 
-    docker-compose up
+    make up
 
-Please note that you will need docker-compose 1.4.2 or better for this to work due to circular references between cluster members.
 You will need to run the following *once* only to initialize all replica sets and shard data across them
 
-    ./initiate
+    make init
 
-A Makefile is also available :  
+Or both : 
+
+    make start
+
+Makefile documentation :  
 
     ⇒  make help
 
@@ -63,6 +52,12 @@ You should now be able connect to mongos1 and the new sharded cluster from the m
 
     docker exec -it mongos1 mongo --port 21017
 
+### Version
+
+By default, it will start a MongoDb 4.0 cluster, but you can also start MongoDB in version 3.6 : 
+
+    MONGO_VERSION=3.6 make start
+
 ## Persistent storage
 Data is stored in docker volumes. To remove all data : `make clean`.
 
@@ -79,3 +74,4 @@ Data is stored in docker volumes. To remove all data : `make clean`.
  - [Mongo Docker ](https://github.com/jacksoncage/mongo-docker)
  - [DnsDock](https://github.com/tonistiigi/dnsdock)
  - [Docker](https://github.com/dotcloud/docker/)
+ - [WaitForIt](https://github.com/vishnubob/wait-for-it)
